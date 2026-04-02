@@ -2,6 +2,7 @@ const Form = require('../models/Form');
 const Response = require('../models/Response');
 const ApiError = require('../utils/apiError');
 const asyncHandler = require('../utils/asyncHandler');
+const paginate = require('../utils/paginator');
 
 // Créer un nouveau formulaire
 exports.createForm = asyncHandler(async (req, res) => {
@@ -11,10 +12,10 @@ exports.createForm = asyncHandler(async (req, res) => {
     res.status(201).json(form);
 });
 
-// Lister tous les formulaires
+// Lister tous les formulaires (avec pagination)
 exports.getAllForms = asyncHandler(async (req, res) => {
-    const forms = await Form.find();
-    res.json(forms);
+    const result = await paginate(Form, {}, req.query);
+    res.json(result);
 });
 
 // Récupérer un formulaire par son ID
@@ -55,8 +56,8 @@ exports.submitResponse = asyncHandler(async (req, res) => {
     res.status(201).json(response);
 });
 
-// Récupérer les réponses d'un formulaire
+// Récupérer les réponses d'un formulaire (avec pagination)
 exports.getResponsesByFormId = asyncHandler(async (req, res) => {
-    const responses = await Response.find({ formId: req.params.id });
-    res.json(responses);
+    const result = await paginate(Response, { formId: req.params.id }, req.query);
+    res.json(result);
 });
