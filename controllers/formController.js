@@ -12,9 +12,25 @@ exports.createForm = asyncHandler(async (req, res) => {
     res.status(201).json(form);
 });
 
-// Lister tous les formulaires (avec pagination)
+// Lister tous les formulaires (avec pagination, recherche et filtres)
 exports.getAllForms = asyncHandler(async (req, res) => {
-    const result = await paginate(Form, {}, req.query);
+    const filter = {};
+
+    // Recherche par titre : ?search=contact
+    // Comme SearchFilter en DRF
+    if (req.query.search) {
+        filter.title = { $regex: req.query.search, $options: 'i' };
+    }
+
+    // Filtre par date : ?from=2026-01-01&to=2026-12-31
+    // Comme django-filter DateFromToRangeFilter
+    if (req.query.from || req.query.to) {
+        filter.createdAt = {};
+        if (req.query.from) filter.createdAt.$gte = new Date(req.query.from);
+        if (req.query.to) filter.createdAt.$lte = new Date(req.query.to);
+    }
+
+    const result = await paginate(Form, filter, req.query);
     res.json(result);
 });
 
@@ -56,8 +72,17 @@ exports.submitResponse = asyncHandler(async (req, res) => {
     res.status(201).json(response);
 });
 
-// Récupérer les réponses d'un formulaire (avec pagination)
+// Récupérer les réponses d'un formulaire (avec pagination et filtres)
 exports.getResponsesByFormId = asyncHandler(async (req, res) => {
-    const result = await paginate(Response, { formId: req.params.id }, req.query);
+    const filter = { formId: req.params.id };
+
+    // Filtre par date : ?from=2026-04-01&to=2026-04-02
+    if (req.query.from || req.query.to) {
+        filter.createdAt = {};
+        if (req.query.from) filter.createdAt.$gte = new Date(req.query.from);
+        if (req.query.to) filter.createdAt.$lte = new Date(req.query.to);
+    }
+
+    const result = await paginate(Response, filter, req.query);
     res.json(result);
 });
