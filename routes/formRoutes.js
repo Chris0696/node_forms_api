@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { createForm, getAllForms, getFormById, updateForm, deleteForm, submitResponse, getResponsesByFormId } = require('../controllers/formController');
+const validateForm = require('../validators/formValidator');
 const validateResponse = require('../validators/responseValidator');
 
 // Routes pour les formulaires
-router.post('/', createForm);
+router.post('/', validateForm, createForm);       // Valide PUIS crée
 router.get('/', getAllForms);
 router.get('/:id', getFormById);
-router.put('/:id', updateForm);
+router.put('/:id', validateForm, updateForm);     // Valide PUIS modifie
 router.delete('/:id', deleteForm);
 
 // Routes pour les réponses

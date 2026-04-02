@@ -2,6 +2,7 @@ const connectDB = require('./configs/db');
 const express = require('express');
 const cors = require('cors');
 const formRoutes = require('./routes/formRoutes');
+const errorHandler = require('./middlewares/errorHandler');
 require('dotenv').config();
 
 const app = express();
@@ -19,7 +20,8 @@ app.get('/', (req, res) => {
     res.json({ message: 'Dynamic Forms API is running' });
 });
 
-
+// Middleware d'erreur global — DOIT être après les routes
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
