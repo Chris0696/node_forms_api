@@ -20,6 +20,16 @@ const errorHandler = (err, req, res, next) => {
         return res.status(400).json({ error: `ID invalide: ${err.value}` });
     }
 
+    // Token JWT invalide
+    if (err.name === 'JsonWebTokenError') {
+        return res.status(401).json({ error: 'Token invalide' });
+    }
+
+    // Token JWT expiré
+    if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({ error: 'Token expiré, reconnectez-vous' });
+    }
+
     // Erreur inattendue → 500
     console.error('Erreur inattendue:', err);
     res.status(500).json({ error: 'Erreur interne du serveur' });
