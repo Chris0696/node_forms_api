@@ -106,9 +106,11 @@ function FormSubmit() {
                         )}
                     </div>
                 ))}
-                <button type="submit">Envoyer</button>
+                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'space-between' }}>
+                    <button onClick={() => navigate('/')} type="button" className="btn-secondary">Retour</button>
+                    <button type="submit">Envoyer</button>
+                </div>
             </form>
-            <button onClick={() => navigate('/')} className="btn-secondary">Retour</button>
         </div>
     );
 }

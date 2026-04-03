@@ -1,3 +1,4 @@
+import ConfirmModal from '../components/ConfirmModal';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
@@ -8,6 +9,7 @@ function FormList({ user }) {
     const [forms, setForms] = useState([]);          // Liste des formulaires
     const [search, setSearch] = useState('');         // Terme de recherche
     const [pagination, setPagination] = useState({}); // Infos de pagination
+    const [deleteId, setDeleteId] = useState(null);   // ID du formulaire à supprimer (pour la confirmation)
 
     // Fonction pour récupérer les formulaires depuis l'API
     const fetchForms = async (page = 1) => {
@@ -33,10 +35,22 @@ function FormList({ user }) {
     };
 
     // Suppression avec confirmation
-    const handleDelete = async (id) => {
-        if (!window.confirm('Supprimer ce formulaire ?')) return;
-        await api.delete(`/forms/${id}`);
-        fetchForms(); // Recharge la liste après suppression
+    // const handleDelete = async (id) => {
+    //     if (!window.confirm('Supprimer ce formulaire ?')) return;
+    //     await api.delete(`/forms/${id}`);
+    //     fetchForms(); // Recharge la liste après suppression
+    // };
+    const handleDelete = async () => {
+        try {
+            await api.delete(`/forms/${deleteId}`);
+            setDeleteId(null); // Ferme la modal
+            fetchForms(); // Recharge la liste après suppression
+        } catch (err) {
+            setDeleteId(null);
+            if (err.response?.status === 401) {
+                alert('Vous n\'êtes pas autorisé à supprimer ce formulaire.');
+            }
+        }
     };
 
     return (
@@ -73,7 +87,7 @@ function FormList({ user }) {
                             {user?.role === 'admin' && (
                                 <>
                                     <Link to={`/forms/${form._id}/edit`}>Modifier</Link>
-                                    <button onClick={() => handleDelete(form._id)} className="btn-danger">Supprimer</button>
+                                    <button onClick={() => setDeleteId(form._id)} className="btn-danger">Supprimer</button>
                                 </>
                             )}
                         </div>
@@ -96,6 +110,12 @@ function FormList({ user }) {
                     ))}
                 </div>
             )}
+            <ConfirmModal
+                isOpen={deleteId !== null}
+                message="Voulez-vous vraiment supprimer ce formulaire ?"
+                onConfirm={handleDelete}
+                onCancel={() => setDeleteId(null)}
+            />
         </div>
     );
 }

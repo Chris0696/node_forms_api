@@ -137,9 +137,16 @@ function FormCreate() {
                     </div>
                 ))}
                 <button type="button" onClick={addField} className="btn-secondary">+ Ajouter un champ</button>
-                <button type="submit">{isEdit ? 'Modifier' : 'Creer'}</button>
+                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'space-between' }}>
+                    <button onClick={() => navigate('/')} type="button" className="btn-secondary">Retour</button>
+                    {/* <button type="submit">Envoyer</button> */}
+                    <button type="submit">{isEdit ? 'Modifier' : 'Creer'}</button>
+                </div>
+
+                {/* <button type="button" onClick={addField} className="btn-secondary">+ Ajouter un champ</button> */}
+                {/* <button type="submit">{isEdit ? 'Modifier' : 'Creer'}</button> */}
             </form>
-            <button onClick={() => navigate('/')} className="btn-secondary">Retour</button>
+            {/* <button onClick={() => navigate('/')} className="btn-secondary">Retour</button> */}
         </div>
     );
 }

@@ -19,7 +19,7 @@ function App() {
         if (token) {
             try {
                 // Décode le payload du JWT (la partie entre les 2 points)
-                const payload = JSON.parse(atob(token.split('.')[1]));
+                const payload = JSON.parse(atob(token.split('.')[1])); // atob() = décode une chaîne encodée en base64
                 return { id: payload.id, role: payload.role };
             } catch {
                 return null;
